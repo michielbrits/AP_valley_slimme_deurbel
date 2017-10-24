@@ -1,0 +1,28 @@
+	<style type="text/css">
+	input[type=checkbox]{
+    margin: 0 auto;
+    width: 100%;
+
+	</style>
+	<form action="listener.php" method="post" id="myForm">
+	<input type="hidden" name="subcheck" value="0" />
+		<input type="checkbox" name="checkbox" id="checkbox" value="1"">
+				<input type="submit" name="">
+	</form> 
+	<h1>DeviceManager</h1>
+		<h1>Devifdfd</h1>
+	<br>
+	<table class="table table-striped table-hover"><thead><tr><th>DeviceName</th><th>Message</th><th>Latest Update</th></tr></thead>
+	<tbody>
+	<tr ng-repeat="node in nodes"><td>{{ node.DeviceName }}</td><td>{{ node.Message }}</td><td>{{ node.DateTime }}</td><td><button ng-click="remove(node.ID)">Remove</button></td></tr>
+	<tr><td><input type="text" ng-model="DeviceName"></td><td><input type="text" ng-model="Message"></td><td></td><td><button ng-click='addnode(DeviceName, Message)'>Add</button></td></tr>
+	</tbody>
+	</table>
+
+	<!-- <div>{{nodes}}</div> -->
+
+
+		<!--	<form action="addnode.php" method="post" id="myForm">
+		<input type="text" name="DeviceName">
+				<input type="submit" value="Addnode"> -->
+	</form>
