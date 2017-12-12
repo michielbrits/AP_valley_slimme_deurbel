@@ -1,8 +1,9 @@
-Arduino nano 2,28 euro
-Hall sensor 1,89 euro
-5V DC supply 1,02 euro
-Wifi module 2,56 euro
-3D geprinte case 3 euro?
-PCB 4 euro?
+Oplage voor 50 stuks
 
-Totaal 14,74 euro
+Hall sensor = 1,57
+wif module 2,44
+arduino nano = 2.19
+PCB = 2
+3D case = 4
+headers, condensators = 0,19
+Step down converter (2x) = 2,46
