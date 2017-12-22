@@ -1,0 +1,9 @@
+Oplage voor 50 stuks
+
+Hall sensor = 1,57
+wif module 2,44
+arduino nano = 2.19
+PCB = 2
+3D case = 4
+headers, condensators = 0,19
+Step down converter (2x) = 2,46
