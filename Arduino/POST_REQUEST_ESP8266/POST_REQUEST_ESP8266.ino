@@ -11,36 +11,66 @@ String data[ARRAYSIZE];
 void setup() {
 
   Serial.begin(57600);
-  Serial.println("\nPress WPS button on your router ...");
-  //delay(5000);
-  //startWPSPBC();
-  WiFi.begin("iot", "iot12345");   //WiFi connection
-      while (WiFi.status() != WL_CONNECTED)
-      { //Wait for the WiFI connection completion
-        delay(500);
-        Serial.println("Waiting for connection");
-      }
-  iotinrange = false; 
-  //int n = WiFi.scanNetworks();
-/*  for (int i = 0; i < n; ++i)
+  Serial.println("hzzzy");
+  Serial.begin(57600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+  int n = WiFi.scanNetworks();
+  for (int i = 0; i < n; ++i)
   {
-    // Print SSID and RSSI for each network found
     if (WiFi.SSID(i) == "iot")
-    { //enter the ssid which you want to search
+    {
       iotinrange = true;
-      WiFi.begin("iot", "iot12345");   //WiFi connection
-      while (WiFi.status() != WL_CONNECTED)
-      { //Wait for the WiFI connection completion
-        delay(500);
-        Serial.println("Waiting for connection");
+      Serial.println("iot in range");
+    }
+  }
+  if (iotinrange == true)
+  {
+    WiFi.begin("iot", "iot12345");   //WiFi connection
+    while (WiFi.status() != WL_CONNECTED) {  //Wait for the WiFI connection completion
+    delay(500);
+    Serial.println("Waiting for connection");
+    }
+  }
+  else
+  {
+    Serial.println("iot not found");
+    connectwifi();
+  }
+  /* if(iotinrange == false)
+    {
+       connectwifi();
+    } */
+  /*  int n = WiFi.scanNetworks();
+    for (int i = 0; i < n; ++i)
+    {
+      // Print SSID and RSSI for each network found
+      if (WiFi.SSID(i) == "iot")
+      { //enter the ssid which you want to search
+        iotinrange = true;
+        WiFi.begin("iot", "iot12345");   //WiFi connection
+        while (WiFi.status() != WL_CONNECTED)
+        { //Wait for the WiFI connection completion
+          delay(500);
+          Serial.println("Waiting for connection");
+        }
       }
     }
-  } */
- /* if (iotinrange == false)
-  {
-    delay(5000);
-    startWPSPBC();
-  } */
+
+    delay(5000); */
+
+}
+void connectwifi() {
+  /*WiFi.begin("iot", "iot12345");   //WiFi connection
+      while (WiFi.status() != WL_CONNECTED)
+      { //Wait for the WiFI connection completion
+        delay(500);
+        Serial.println("Waiting for connection");
+      } */
+  Serial.println("\nPress WPS button on your router ...");
+  delay(5000);
+  startWPSPBC();
 }
 bool startWPSPBC() {
   //Serial.println("WPS config start");
@@ -66,7 +96,7 @@ bool startWPSPBC() {
     } else {
       wpsSuccess = false;
       //delay(5000);
-      setup();
+      connectwifi();
     }
   }
   return wpsSuccess;
@@ -75,7 +105,7 @@ bool startWPSPBC() {
 void loop() {
 
   if (WiFi.status() == WL_CONNECTED) { //Check WiFi connection status
-    //Serial.println("Connected");
+    Serial.println("Connected");
 
 
     //TODO serial proberen werkend te krijgen
@@ -108,9 +138,11 @@ void loop() {
 
     Serial.println("Error in WiFi connection");
     //setup();
+    //connectwifi();
 
   }
 
   //delay(1000);  //Send a request every 5 seconds
 
 }
+
