@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 uniqueId = uniqueIdText.getText().toString();
-                new RetrieveFeedTask(uniqueId, passwordText.getText().toString()).execute();
+                new LoginTask(uniqueId, passwordText.getText().toString()).execute();
             }
         });
         Switch toggle = (Switch) findViewById(R.id.switch1);
@@ -100,10 +100,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    class RetrieveFeedTask extends AsyncTask<Void, Void, String> {
+    class LoginTask extends AsyncTask<Void, Void, String> {
         private String uniqueId;
         private String password;
-        public RetrieveFeedTask(String uniqueId_, String password_) {
+        public LoginTask(String uniqueId_, String password_) {
             uniqueId = uniqueId_;
             password = password_;
         }

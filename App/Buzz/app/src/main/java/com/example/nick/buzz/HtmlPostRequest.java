@@ -85,7 +85,6 @@ public class HtmlPostRequest extends AsyncTask<String, String, String> {
             urlConnection.setConnectTimeout(15000);
             urlConnection.setDoOutput(true);
             urlConnection.setDoInput(true);
-            urlConnection.setRequestMethod("POST");
             if (uniqueId != null)
                 urlConnection.setRequestProperty("userid", "" + uniqueId);
             if (password != null)
@@ -142,7 +141,7 @@ public class HtmlPostRequest extends AsyncTask<String, String, String> {
             json = (JSONArray) new JSONTokener(response.toString()).nextValue();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }/*
         Gson gson = new Gson();
         TimeStamp[] timestamps = gson.fromJson(json.toString(), TimeStamp[].class);
         Log.d("timeSLength", "" + timestamps.length);
@@ -157,6 +156,7 @@ public class HtmlPostRequest extends AsyncTask<String, String, String> {
         response += "]";
         //response = response.substring(0, (response.length()/100));
         Log.d("resp",response);
+        */
         Intent intent = new Intent("responseIntent");
 
         intent.putExtra("response", response);

@@ -45,40 +45,32 @@ import java.util.List;
 import java.util.Set;
 
 public class GraphActivity extends AppCompatActivity {
+    TimeStamp[] timeStamps;
     DataPoint[] graphValues = null;
     GraphView graph = null;
     BroadcastReceiver getTimeStampReceiver;
-    Object response = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
-        getTimeStampReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                response = intent.getExtras().get("response");
-                HandleResponse();
-            }
-        };
         graph = (GraphView) findViewById(R.id.graph);
         new HtmlPostRequest("http://michielserver.com/AP_valley/Gettimestamps.php","AAA000",GraphActivity.this).execute();
-        registerReceiver(getTimeStampReceiver, new IntentFilter("responseIntent"));
     }
 
-    public void HandleResponse(){
+    public void HandleResponse(String response){
         try {
-            Log.d("response",""+response.toString());
-            JSONArray json = (JSONArray) new JSONTokener(response.toString()).nextValue();
+            Log.d("response",response);
+            JSONArray json = (JSONArray) new JSONTokener(response).nextValue();
             Gson gson = new Gson();
-            TimeStamp[] timestamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
-            DataPoint[] datapoints = new DataPoint[timestamps.length];
+            timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
+            DataPoint[] datapoints = new DataPoint[timeStamps.length];
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             //String dateRaw = "2017-11-25";
             //Date date = format.parse(dateRaw);
             ArrayList<Date> filteredTimeStamps=new ArrayList<>();
-            for(int i = 0; i < timestamps.length; i++) {
-                Date d = format.parse(timestamps[i].getTimeStamp());
+            for(int i = 0; i < timeStamps.length; i++) {
+                Date d = format.parse(timeStamps[i].getTimeStamp());
                 /*if(filteredTimeStamps.contains(d)) {
                     continue;
                 }
@@ -152,6 +144,70 @@ public class GraphActivity extends AppCompatActivity {
             }
         }
         return toReturn;
+    }
+
+    class RetrieveTimeStampsTask extends AsyncTask<Void, Void, String> {
+        private String uniqueId;
+        public RetrieveTimeStampsTask(String uniqueId_) {
+            uniqueId = uniqueId_;
+        }
+        protected void onPreExecute() {
+
+        }
+        protected String doInBackground(Void... urls) {
+            HttpURLConnection urlConnection = null;
+            InputStream iStream = null;
+            JSONObject jsonParams = new JSONObject();
+            try {
+                URL url = new URL("http://michielserver.com/AP_valley/Gettimestamps.php");
+                urlConnection = (HttpURLConnection) url.openConnection();
+                try {
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setRequestProperty("Content-type", "x-www-form-urlencoded");
+                    urlConnection.setReadTimeout(10000);
+                    urlConnection.setConnectTimeout(15000);
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    if (uniqueId != null) {
+                        urlConnection.setRequestProperty("userid", "" + uniqueId);
+                        jsonParams.put("userid", uniqueId);
+                    }
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream()));
+                    writer.write(jsonParams.toString());
+                    writer.flush();
+                    writer.close();
+                    int statusCode = urlConnection.getResponseCode();
+                    if (statusCode == HttpURLConnection.HTTP_OK) {
+                        iStream = urlConnection.getInputStream();
+                    } else {
+                        iStream = urlConnection.getErrorStream();
+                    }
+                    BufferedReader bufferedReader;
+                    bufferedReader = new BufferedReader(new InputStreamReader(iStream, "UTF-8"), 8);
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line + "\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                } finally {
+                    urlConnection.disconnect();
+                }
+            } catch (Exception e) {
+                Log.e("ERROR", e.getMessage(), e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String response) {
+            if (response == null) {
+                response = "THERE WAS AN ERROR";
+            }
+            HandleResponse(response);
+            String userName = timeStamps[0].getFirstName();
+            setTitle("Logged in as " + userName);
+        }
     }
 }
 

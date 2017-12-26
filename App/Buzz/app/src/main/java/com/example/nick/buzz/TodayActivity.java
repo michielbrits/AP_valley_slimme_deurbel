@@ -34,8 +34,6 @@ public class TodayActivity extends AppCompatActivity {
     Object response = null;
     String userName = "";
     String uniqueId = "";
-    Timer timer;
-    Boolean timerStarted = false;
 
     class MyCustomAdapter extends ArrayAdapter<TimeStamp> {
         public MyCustomAdapter(Context context, TimeStamp[] timeStamps) {
