@@ -11,7 +11,7 @@ int count = 0;
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(57600);
 }
 
 void loop()
@@ -58,7 +58,7 @@ float getVPP()
     if (result > 0.050 && count == 0)
     {
       count = 5;
-      Serial.print("Pressed");
+      Serial.print("P");
       //delay(5000);
     }
 
