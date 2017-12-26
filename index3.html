@@ -1,0 +1,20 @@
+<html>
+    <body>
+        <script src="autobahn.js"></script>
+<script>
+    var conn = new ab.Session('ws://michielserver.com:8080',
+        function() {
+            conn.subscribe('AAA000', function(topic, data) {
+                // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
+                console.log('New timestamp added to user "' + topic + '" : ' + data.title);
+            });
+        },
+        function() {
+            console.warn('WebSocket connection closed');
+        },
+        {'skipSubprotocolCheck': true}
+    );
+</script>
+
+        </body>
+    </html>

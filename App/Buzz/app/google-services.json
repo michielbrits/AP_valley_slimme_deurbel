@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "273036825139",
+    "firebase_url": "https://buzz-27aaa.firebaseio.com",
+    "project_id": "buzz-27aaa",
+    "storage_bucket": "buzz-27aaa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273036825139:android:70520f2848eee03d",
+        "android_client_info": {
+          "package_name": "com.example.nick.buzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "273036825139-7tunll5l5jrbq6mvh28pj89g6lvlhor9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nick.buzz",
+            "certificate_hash": "0a03c6fdd9bde083feff86631d4c218c66df1606"
+          }
+        },
+        {
+          "client_id": "273036825139-bois2pclieem17f5c94n0t9avlv5hrks.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSntmKi_4LbAD2Qt3FofRbZ2ysZYmP5mQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "273036825139-bois2pclieem17f5c94n0t9avlv5hrks.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="65dp" >
+
+    <TextView
+        android:id="@+id/timeStamp_date"
+        android:text="Date"
+        android:textSize="17dp"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="25dp" />
+    <TextView
+        android:text="Time"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:id="@+id/timeStamp_time"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/timeStamp_date" />
+
+</RelativeLayout>
