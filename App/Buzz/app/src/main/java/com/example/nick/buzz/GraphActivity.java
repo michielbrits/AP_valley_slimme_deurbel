@@ -91,7 +91,8 @@ public class GraphActivity extends AppCompatActivity implements AdapterView.OnIt
             Log.d("response",response);
             JSONArray json = (JSONArray) new JSONTokener(response).nextValue();
             Gson gson = new Gson();
-            timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
+            //timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
+            timeStamps = gson.fromJson(json.toString(), TimeStamp[].class);
             DrawGraph(10);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -99,6 +100,7 @@ public class GraphActivity extends AppCompatActivity implements AdapterView.OnIt
             e.printStackTrace();
         }
     }
+    /*
     private JSONArray ReverseList(JSONArray jsonArray) {
         JSONArray toReturn = new JSONArray();
         int length = jsonArray.length() - 1;
@@ -111,7 +113,7 @@ public class GraphActivity extends AppCompatActivity implements AdapterView.OnIt
         }
         return toReturn;
     }
-
+    */
     private void DrawGraph(final int totalDays) throws ParseException {
         graph.removeAllSeries();
         DataPoint[] datapoints = new DataPoint[totalDays];

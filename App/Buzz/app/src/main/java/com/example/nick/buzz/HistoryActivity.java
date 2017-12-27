@@ -107,14 +107,15 @@ public class HistoryActivity extends AppCompatActivity {
         try {
             JSONArray json = (JSONArray) new JSONTokener(response).nextValue();
             Gson gson = new Gson();
-            //timeStamps = gson.fromJson(json.toString(), TimeStamp[].class);
-            timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
+            timeStamps = gson.fromJson(json.toString(), TimeStamp[].class);
+            //timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
             //adapter!!
             listview.setAdapter(new MyCustomAdapter(HistoryActivity.this, timeStamps));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+    /*
     JSONArray ReverseList(JSONArray jsonArray) {
         JSONArray toReturn = new JSONArray();
         int length = jsonArray.length() - 1;
@@ -127,6 +128,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
         return toReturn;
     }
+    */
     public void onStart() {
         super.onStart();
         //registerReceiver(getTimeStampReceiver, new IntentFilter("responseIntent"));
