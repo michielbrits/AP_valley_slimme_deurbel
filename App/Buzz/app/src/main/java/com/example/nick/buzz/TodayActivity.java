@@ -66,13 +66,16 @@ public class TodayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.small_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         getTimeStampReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 response = intent.getExtras().get("response");
                 HandleResponse();
-                setTitle("Logged in as " + userName);
+                //setTitle("Logged in as " + userName);
             }
         };
 

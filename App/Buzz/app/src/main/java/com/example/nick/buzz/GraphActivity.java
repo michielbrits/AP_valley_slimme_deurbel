@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jjoe64.graphview.DefaultLabelFormatter;
@@ -38,24 +43,47 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GraphActivity extends AppCompatActivity {
+public class GraphActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     TimeStamp[] timeStamps;
     DataPoint[] graphValues = null;
     GraphView graph = null;
     BroadcastReceiver getTimeStampReceiver;
+    String uniqueId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.small_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
         graph = (GraphView) findViewById(R.id.graph);
-        new HtmlPostRequest("http://michielserver.com/AP_valley/Gettimestamps.php","AAA000",GraphActivity.this).execute();
+        uniqueId = getIntent().getStringExtra("UniqueId");
+        Button logoutBtn = (Button) findViewById(R.id.LogoutButton);
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(GraphActivity.this, LoginActivity.class));
+            }
+        });
+        //get the spinner from the xml.
+        Spinner dropdown = (Spinner) findViewById(R.id.spinner1);
+        //create a list of items for the spinner.
+        String[] items = new String[]{"1", "2", "3","4", "5", "6","7", "8", "9", "10"};
+        //create an adapter to describe how the items are displayed, adapters are used in several places in android.
+        //There are multiple variations of this, but this is the basic variant.
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        //set the spinners adapter to the previously created one.
+        dropdown.setAdapter(spinnerAdapter);
+        dropdown.setOnItemSelectedListener(this);
+        new GraphActivity.RetrieveTimeStampsTask(uniqueId).execute();
     }
 
     public void HandleResponse(String response){
@@ -64,76 +92,14 @@ public class GraphActivity extends AppCompatActivity {
             JSONArray json = (JSONArray) new JSONTokener(response).nextValue();
             Gson gson = new Gson();
             timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
-            DataPoint[] datapoints = new DataPoint[timeStamps.length];
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            //String dateRaw = "2017-11-25";
-            //Date date = format.parse(dateRaw);
-            ArrayList<Date> filteredTimeStamps=new ArrayList<>();
-            for(int i = 0; i < timeStamps.length; i++) {
-                Date d = format.parse(timeStamps[i].getTimeStamp());
-                /*if(filteredTimeStamps.contains(d)) {
-                    continue;
-                }
-                else{
-                */    filteredTimeStamps.add(d);
-                    //datapoints[i] = new DataPoint(d,i);
-                    //Log.d("dp","" +datapoints[i].getX());
-                //}
-
-                //datapoints[i] = new DataPoint(format.parse(timestamps[i].getTimeStamp()), 8);
-                //Log.d("ts",timestamps[i].getTimeStamp());
-                //Log.d("ts",format.parse(timestamps[i].getTimeStamp()).toString());
-
-            }
-            int[] datesOccured = new int[filteredTimeStamps.size()];
-            for (int i = 0; i < filteredTimeStamps.size(); i++){
-                datesOccured[i] = Collections.frequency(filteredTimeStamps, filteredTimeStamps.get(i) );
-            }
-            for(int i = 0; i < datesOccured.length; i++) {
-                Log.d("datesOccured","" + datesOccured[i]);
-
-            }
-
-            //DataPoint[] datapoints = new DataPoint[filteredTimeStamps.size()];
-            for(int i = 0; i < filteredTimeStamps.size(); i++) {
-           //         datapoints[i] = new DataPoint(filteredTimeStamps.d,i);
-                    Log.d("dp","" +datapoints[i].getX());
-                }
-
-
-            BarGraphSeries<DataPoint> series = new BarGraphSeries<>(datapoints);
-
-            //graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphActivity.this));
-            graph.getViewport().setXAxisBoundsManual(true);
-            graph.getViewport().setYAxisBoundsManual(true);
-            graph.getViewport().setMinX(0);
-            //graph.getViewport().setMaxX(7);
-            graph.getViewport().setMinY(0);
-            graph.getViewport().setMaxY(25);
-            graph.getViewport().setScrollable(true);
-            graph.addSeries(series);
-
-// styling
-            series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
-                @Override
-                public int get(DataPoint data) {
-                    return Color.rgb((int) data.getX() * 255 / 4, (int) Math.abs(data.getY() * 255 / 6), 100);
-                }
-            });
-
-            series.setSpacing(50);
-
-// draw values on top
-            series.setDrawValuesOnTop(true);
-            series.setValuesOnTopColor(Color.RED);
-//series.setValuesOnTopSize(50);
+            DrawGraph(10);
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
-    JSONArray ReverseList(JSONArray jsonArray) {
+    private JSONArray ReverseList(JSONArray jsonArray) {
         JSONArray toReturn = new JSONArray();
         int length = jsonArray.length() - 1;
         for (int i = length; i >= 0; i--) {
@@ -144,6 +110,100 @@ public class GraphActivity extends AppCompatActivity {
             }
         }
         return toReturn;
+    }
+
+    private void DrawGraph(final int totalDays) throws ParseException {
+        graph.removeAllSeries();
+        DataPoint[] datapoints = new DataPoint[totalDays];
+        final DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        //String dateRaw = "2017-11-25";
+        //Date date = format.parse(dateRaw);
+        int[] ringsPerDay = new int[totalDays];
+        final int oneDay = 86400000;
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        Date lastMidnight = cal.getTime();
+        for(int i = 0; i < ringsPerDay.length; i++) {
+            for(int j = 0; j < timeStamps.length; j++) {
+                Date d = format.parse(timeStamps[j].getTimeStamp());
+                if(d.getTime() > lastMidnight.getTime() - oneDay*i && d.getTime() < (lastMidnight.getTime() - oneDay*i) + oneDay)
+                {
+                    ringsPerDay[i]++;
+                }
+            }
+        }
+        int maxRings = 0;
+        for(int i = 0; i < ringsPerDay.length; i++) {
+            datapoints[i] = new DataPoint(totalDays-i, ringsPerDay[i]);
+            Log.d("ringsPerDay", ""+ringsPerDay[i]);
+            if(ringsPerDay[i] > maxRings)
+                maxRings = ringsPerDay[i];
+        }
+
+        BarGraphSeries<DataPoint> series = new BarGraphSeries<>(datapoints);
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    // show normal x values
+                    DateFormat format = new SimpleDateFormat("E dd/MM");  //add E \n to string to add day
+                    Calendar c = Calendar.getInstance();
+                    c.setTimeInMillis(new Date().getTime() - (oneDay*(totalDays-(long)value)));
+                    Date xValue = c.getTime();
+                    return format.format(xValue);
+                } else {
+                    // show currency for y values
+                    return super.formatLabel(value, isValueX);
+                }
+            }
+        });
+        graph.getGridLabelRenderer().setLabelHorizontalHeight(175);
+        graph.getGridLabelRenderer().setHorizontalLabelsAngle(50);
+        graph.getGridLabelRenderer().setNumHorizontalLabels(totalDays+2);
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getViewport().setYAxisBoundsManual(true);
+        graph.getViewport().setMinX(0);
+        graph.getViewport().setMaxX(totalDays + 1);
+        graph.getViewport().setMinY(0);
+        graph.getViewport().setMaxY(maxRings + 5);
+        graph.getViewport().setScrollable(true);
+        graph.getViewport().setScalable(true);
+        graph.addSeries(series);
+
+        // styling
+        series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+            @Override
+            public int get(DataPoint data) {
+                return Color.rgb(255,121, 0);
+            }
+        });
+
+        series.setSpacing(10);
+
+        // draw values on top
+        series.setDrawValuesOnTop(true);
+        series.setValuesOnTopColor(Color.BLACK);
+        //series.setValuesOnTopSize(50);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        parent.getItemAtPosition(position);
+        int scope = Integer.parseInt(parent.getItemAtPosition(position).toString());
+        try {
+            if(timeStamps != null)
+                DrawGraph(scope);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        //do nothing
     }
 
     class RetrieveTimeStampsTask extends AsyncTask<Void, Void, String> {
@@ -206,7 +266,7 @@ public class GraphActivity extends AppCompatActivity {
             }
             HandleResponse(response);
             String userName = timeStamps[0].getFirstName();
-            setTitle("Logged in as " + userName);
+            //setTitle("Logged in as " + userName);
         }
     }
 }

@@ -16,6 +16,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("Main", "onCreate");
         setContentView(R.layout.activity_main);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.small_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
         uniqueId = getIntent().getStringExtra("UniqueId");
 
         Button logoutBtn = (Button) findViewById(R.id.LogoutButton);

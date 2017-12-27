@@ -74,6 +74,9 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.small_logo);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
         /*getTimeStampReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -196,7 +199,7 @@ public class HistoryActivity extends AppCompatActivity {
             }
             HandleResponse(response);
             userName = timeStamps[0].getFirstName();
-            setTitle("Logged in as " + userName);
+            //setTitle("Logged in as " + userName);
         }
     }
 }
