@@ -1,0 +1,177 @@
+body{
+    padding: 20px;
+    background-color: #DDD;
+}
+img{
+    display: block;
+    margin : 0 auto;
+}
+
+.dateP{
+    display: inline-block;
+}
+
+.graph{
+    text-align: center;
+    width: 100%;
+    display: block;
+}
+
+.datePDiv{
+    display: block;
+}
+
+.chartDiv{
+    display: inline-block;
+    text-align: center;
+}
+
+.login{
+    
+}
+button{
+	  display: block;
+    margin : 0 auto;
+    vertical-align: middle;
+    text-align: center;
+    background-color: #ff7900;
+	  color:white;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+    transition-duration: 0.5s;
+    margin-top: 15px;
+    margin-left: 137.5p;
+    font-size: 1.5em;
+}
+button:hover{
+    background-color: white;
+	  color: darkorange;
+}
+.btnlog{
+    width: 200px;
+    height: 50px;
+    font-size: 2em;
+}
+.logout{
+    width: 150px;
+    height: 45px;
+}
+.changebtn{
+    width: 250px;
+    height: auto;
+}
+input{
+    width: 350px;
+    height: 45px;
+    font-size: 17.5px;
+    border-color: darkorange;
+    border-radius: 30px;
+    border-width: thick;
+    border-style: solid;
+    text-align: center;
+    outline: none;
+    margin-top: 20px;
+    display: block;
+    margin : 0 auto;
+}
+.column{
+    float: left;
+}
+.topleft, .topright{
+    width: 20%
+}
+.topmiddle{
+    width: 60%
+}
+.main{
+    display: inline-block;
+    width: 20%;
+}
+
+.menu{
+    display: block;
+    width: 100%;
+}
+
+.table{
+    float: left;
+    width: 50%;
+    align-content: center;
+    margin-top: 30px;
+    margin-left: 25%;
+    display: block;
+    height: 300px;
+    overflow-y: scroll;
+}
+tr{
+    display: inline-block;
+    width: 100%;
+}
+/*input*/
+::-webkit-input-placeholder {
+  color: #000;
+  opacity: 0.5;
+  -webkit-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:-moz-placeholder {
+  color: #000;
+  opacity: 0.5;
+  -moz-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+::-moz-placeholder {
+  color: #000;
+  opacity: 0.5;
+  -moz-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:-ms-input-placeholder {  
+  color: #000;
+  opacity: 0.5;
+  -ms-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+
+:focus::-webkit-input-placeholder {
+  opacity: 0;
+  -webkit-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:focus:-moz-placeholder {
+  opacity: 0;
+  -moz-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:focus::-moz-placeholder {
+  opacity: 0;
+  -moz-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:focus:-ms-input-placeholder {  
+  opacity: 0;
+  -ms-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+
+:hover::-webkit-input-placeholder {
+  opacity: 0.75;
+  -webkit-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:hover:-moz-placeholder {
+  opacity: 0.75;
+  -moz-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:hover::-moz-placeholder {
+  opacity: 0.75;
+  -moz-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+}
+:hover:-ms-input-placeholder {  
+  opacity: 0.75;
+  -ms-transition: opacity 0.35s ease-in-out;
+  transition: opacity 0.35s ease-in-out;
+} 

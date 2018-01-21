@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+	<style>
+	svg{
+		display: block;
+		margin: 5% auto;
+	}
+	.bar{
+		fill: steelblue;
+	}
+
+	.bar:hover{
+		fill: brown;
+	}
+
+	.axis {
+		font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: #000;
+		shape-rendering: crispEdges;
+	}
+	#chartdiv {
+		width		: 100%;
+		height		: 500px;
+		font-size	: 11px;
+	}
+
+</style>
+</head>
+
+<body>
+
+	<!--	<script src="http://d3js.org/d3.v3.min.js"></script> -->
+	<script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+	<script src="https://www.amcharts.com/lib/3/serial.js"></script>
+	<script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+	<link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+	<script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
+
+	<script>
+
+//mycode
+var response = [ {
+	"Time": "USA",
+	"Amount": 2025 
+}, {
+	"Time": "China",
+	"Amount": 1882
+}, {
+	"Time": "Japan",
+	"Amount": 1809
+}, {
+	"Time": "Germany",
+	"Amount": 1322
+}, {
+	"Time": "UK",
+	"Amount": 1122
+}, {
+	"Time": "France",
+	"Amount": 1114
+}, {
+	"Time": "India",
+	"Amount": 984
+}, {
+	"Time": "Spain",
+	"Amount": 711
+}, {
+	"Time": "Netherlands",
+	"Amount": 665
+}, {
+	"Time": "Russia",
+	"Amount": 580
+}, {
+	"Time": "South Korea",
+	"Amount": 443
+}, {
+	"Time": "Canada",
+	"Amount": 441
+}, {
+	"Time": "Brazil",
+	"Amount": 395
+} ];
+function execute(){
+	console.log("heey");
+	console.log(document.getElementById('StartTimeStamp').value);
+	console.log(document.getElementById('EndTimeStamp').value);
+}
+function checkdate()
+{
+	if (document.getElementById('StartTimeStamp').value != "" && document.getElementById('EndTimeStamp').value != "")
+	{
+		console.log("Date period selected");
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', 'api/Gettimestamps.php');
+		xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded,true");
+		xhr.send("userid=AAA000&starttimestamp="+document.getElementById('StartTimeStamp').value+"&endtimestamp="+document.getElementById('EndTimeStamp').value);
+
+
+		xhr.onload = function() 
+		{
+			if (xhr.status === 200) 
+			{
+				//response = xhr.responseText;
+
+				alert(response);
+				var chart = AmCharts.makeChart( "chartdiv", {
+					"type": "serial",
+					"theme": "light",
+					"dataProvider": response,
+					"valueAxes": [ {
+						"gridColor": "#FFFFFF",
+						"gridAlpha": 0.2,
+						"dashLength": 0
+					} ],
+					"gridAboveGraphs": true,
+					"startDuration": 1,
+					"graphs": [ {
+						"balloonText": "[[category]]: <b>[[value]]</b>",
+						"fillAlphas": 0.8,
+						"lineAlpha": 0.2,
+						"type": "column",
+						"valueField": "Amount"
+					} ],
+					"chartCursor": {
+						"categoryBalloonEnabled": false,
+						"cursorAlpha": 0,
+						"zoomable": false
+					},
+					"categoryField": "timetamp",
+					"categoryAxis": {
+						"gridPosition": "start",
+						"gridAlpha": 0,
+						"tickPosition": "start",
+						"tickLength": 20
+					},
+					"export": {
+						"enabled": true
+					}
+
+				} );
+			}
+			else 
+			{
+				alert('Request failed.  Returned status of ' + xhr.status);
+			}
+		};
+	}
+	console.log(document.getElementById('StartTimeStamp').value);
+	console.log(document.getElementById('EndTimeStamp').value);
+}
+
+					//mycode
+
+
+					// set the dimensions of the canvas
+				/*	var margin = {top: 20, right: 20, bottom: 70, left: 40},
+					width = 600 - margin.left - margin.right,
+					height = 300 - margin.top - margin.bottom;
+
+
+					// set the ranges
+					var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+					var y = d3.scale.linear().range([height, 0]);
+
+					// define the axis
+					var xAxis = d3.svg.axis()
+					.scale(x)
+					.orient("bottom")
+
+
+					var yAxis = d3.svg.axis()
+					.scale(y)
+					.orient("left")
+					.ticks(10);
+
+
+					// add the SVG element
+					var svg = d3.select("body").append("svg")
+					.attr("width", width + margin.left + margin.right)
+					.attr("height", height + margin.top + margin.bottom)
+					.append("g")
+					.attr("transform", 
+						"translate(" + margin.left + "," + margin.top + ")");
+
+
+					// load the data
+					d3.json(response, function(error, data) {
+
+						response.forEach(function(d) {
+							d.Letter = d.Letter;
+							d.Freq = +d.Freq;
+						});
+						
+					  // scale the range of the data
+					  x.domain(response.map(function(d) { return d.Letter; }));
+					  y.domain([0, d3.max(response, function(d) { return d.Freq; })]);
+
+					  // add axis
+					  svg.append("g")
+					  .attr("class", "x axis")
+					  .attr("transform", "translate(0," + height + ")")
+					  .call(xAxis)
+					  .selectAll("text")
+					  .style("text-anchor", "end")
+					  .attr("dx", "-.8em")
+					  .attr("dy", "-.55em")
+					  .attr("transform", "rotate(-90)" );
+
+					  svg.append("g")
+					  .attr("class", "y axis")
+					  .call(yAxis)
+					  .append("text")
+					  .attr("transform", "rotate(-90)")
+					  .attr("y", 5)
+					  .attr("dy", ".71em")
+					  .style("text-anchor", "end")
+					  .text("Amount");
+
+
+					  // Add bar chart
+					  svg.selectAll("bar")
+					  .data(response)
+					  .enter().append("rect")
+					  .attr("class", "bar")
+					  .attr("x", function(d) { return x(d.Letter); })
+					  .attr("width", x.rangeBand())
+					  .attr("y", function(d) { return y(d.Freq); })
+					  .attr("height", function(d) { return height - y(d.Freq); });
+
+					}); */
+
+				</script>
+				<script type="text/javascript">
+
+				</script>
+				<div id="chartdiv"></div>			
+				<input type="date" id="StartTimeStamp" placeholder="StartTimeStamp" onchange="checkdate()">
+				<input type="date" id="EndTimeStamp" placeholder ="EndTimeStamp" onchange="checkdate()">
+				<input type="button" name="" onclick="execute()">
+
+			</body>
