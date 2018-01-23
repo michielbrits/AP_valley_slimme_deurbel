@@ -1,0 +1,42 @@
+<header>
+   <div class="column topleft">
+      <img class="logosmall" src="small%20logo.png" alt="Buzz" width="75" height="75">
+   </div>
+   <div class="column topmiddle">
+      <input type="text" name="Code" id="Code" placeholder="ENTER NEW PASSWORD" ng-model="Newpsw" ng-hide="true"/>
+      <button class="changebtn" type="submit" name="Change" id="Change" ng-click="Change()" ng-hide="true">Change Password</button>
+   </div>
+   <div class="column topright">
+      <button  class="logout" type="submit" name="Logout" id="Logout" ng-click="Logout()" ng-hide="true">Logout</button>
+   </div>
+</header>
+<div class="menu">
+<div class="main">
+   <img class="" src="history.png" alt="History" width="90" height="100" ng-click="gethistory()">
+</div>
+<div class="main">
+   <img class="" src="today.png" alt="Today" width="75" height="100" ng-click="gettimestamps24()">
+</div>
+<div class="main">
+   <img class="" src="graphs.png" alt="Graphs" width="90" height="100" ng-click="getgraphs()">
+</div>
+</div>
+<table class="table table-striped table-hover" ng-show="showtable">
+   <thead>
+      <tr>
+         <th>Timestamp</th>
+      </tr>
+   </thead>
+   <tbody>
+      <tr ng-repeat="timestamp in timestamps  | limitTo:amount" >
+         <td>{{ timestamp.timestamp | date : kindoftime}}</td>
+      </tr>
+   </tbody>
+</table>
+<div class="graph" ng-hide="showtable">
+   <div google-chart chart="myChartObject" class="chartDiv"></div>
+   <div class="datePDiv">
+   <input type="date" id="date" class="dateP" placeholder="StartTimeStamp" ng-model="datepicker1" ng-change="datechanged()">
+   <input type="date" id="date" class="dateP" placeholder ="EndTimeStamp" ng-model="datepicker2" ng-change="datechanged()">
+   </div>
+</div>
