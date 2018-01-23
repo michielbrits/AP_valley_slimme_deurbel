@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +36,9 @@ public class TodayActivity extends AppCompatActivity {
     String userName = "";
     String uniqueId = "";
 
+    private static final String PREFS_NAME = "prefs";
+    private static final String PREF_DARK_THEME = "dark_theme";
+
     class MyCustomAdapter extends ArrayAdapter<TimeStamp> {
         public MyCustomAdapter(Context context, TimeStamp[] timeStamps) {
             super(context, -1, timeStamps);
@@ -64,8 +68,13 @@ public class TodayActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
+        if (useDarkTheme) {
+            setTheme(R.style.Theme_AppCompat_BuzzDarkTheme);
+        }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.activity_today);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.small_logo);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
@@ -89,7 +98,9 @@ public class TodayActivity extends AppCompatActivity {
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(TodayActivity.this, LoginActivity.class));
+                Intent intent = new Intent(TodayActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }
@@ -100,7 +111,7 @@ public class TodayActivity extends AppCompatActivity {
             Gson gson = new Gson();
             //timeStamps = gson.fromJson(json.toString(), TimeStamp[].class);
             timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
-            userName = timeStamps[0].getFirstName();
+            //userName = timeStamps[0].getFirstName();
             //adapter!!
             listview.setAdapter(new MyCustomAdapter(TodayActivity.this, timeStamps));
         } catch (JSONException e) {

@@ -1,6 +1,7 @@
 package com.example.nick.buzz;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,8 +12,16 @@ import android.widget.ImageButton;
 public class MainActivity extends AppCompatActivity {
     String uniqueId = "";
 
+    private static final String PREFS_NAME = "prefs";
+    private static final String PREF_DARK_THEME = "dark_theme";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
+        if (useDarkTheme) {
+            setTheme(R.style.Theme_AppCompat_BuzzDarkTheme);
+        }
         super.onCreate(savedInstanceState);
         Log.d("Main", "onCreate");
         setContentView(R.layout.activity_main);
@@ -30,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
 

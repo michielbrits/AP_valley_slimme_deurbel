@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -38,10 +39,12 @@ import java.util.TimerTask;
 public class HistoryActivity extends AppCompatActivity {
 
     ListView listview = null;
-    //BroadcastReceiver getTimeStampReceiver;
     TimeStamp[] timeStamps;
     String userName = "";
     String uniqueId = "";
+
+    private static final String PREFS_NAME = "prefs";
+    private static final String PREF_DARK_THEME = "dark_theme";
 
     class MyCustomAdapter extends ArrayAdapter<TimeStamp> {
         public MyCustomAdapter(Context context, TimeStamp[] timeStamps) {
@@ -62,43 +65,35 @@ public class HistoryActivity extends AppCompatActivity {
             TextView timeTv = (TextView) view.findViewById((R.id.timeStamp_time));
             dateTv.setText(timeStamp.getFirstName());
             timeTv.setText((timeStamp.getTimeStamp()));
-            /*if(useDarkTheme)
-                view.findViewById(R.id.img).setBackgroundResource(R.drawable.simple_home_controller_white);
-            else
-                view.findViewById(R.id.img).setBackgroundResource(R.drawable.simple_home_controller);
-            */return view;
+            return view;
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
+        if (useDarkTheme) {
+            setTheme(R.style.Theme_AppCompat_BuzzDarkTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.small_logo);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
-        /*getTimeStampReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                response = intent.getExtras().get("response");
-                HandleResponse();
-                setTitle("Logged in as " + userName);
-            }
-        }
-        */
 
         uniqueId = getIntent().getStringExtra("UniqueId");
         //view!!
         listview = (ListView) findViewById(R.id.listview);
         //data!!
-        //new HtmlPostRequest("http://michielserver.com/AP_valley/Gettimestamps.php","AAA000",HistoryActivity.this).execute();
-        new HistoryActivity.RetrieveTimeStampsTask(uniqueId).execute();
-        //registerReceiver(getTimeStampReceiver, new IntentFilter("responseIntent"));
+         new HistoryActivity.RetrieveTimeStampsTask(uniqueId).execute();
         Button logoutBtn = (Button) findViewById(R.id.LogoutButton);
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(HistoryActivity.this, LoginActivity.class));
+                Intent intent = new Intent(HistoryActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
     }
@@ -129,17 +124,6 @@ public class HistoryActivity extends AppCompatActivity {
         return toReturn;
     }
     */
-    public void onStart() {
-        super.onStart();
-        //registerReceiver(getTimeStampReceiver, new IntentFilter("responseIntent"));
-        Log.d("History", "onStart");
-    }
-    public void onStop() {
-        super.onStop();
-        //unregisterReceiver(getTimeStampReceiver);
-        Log.d("History", "onStop");
-    }
-
 
     class RetrieveTimeStampsTask extends AsyncTask<Void, Void, String> {
         private String uniqueId;

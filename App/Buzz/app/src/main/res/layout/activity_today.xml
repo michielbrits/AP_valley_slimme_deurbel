@@ -6,17 +6,35 @@
     android:layout_height="match_parent"
     tools:context="com.example.nick.buzz.TodayActivity">
 
-
-    <TextView
-        android:id="@+id/textView"
+    <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="135dp"
-        android:layout_marginStart="135dp"
-        android:layout_marginTop="16dp"
-        android:text="Today" />
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="26dp"
+            android:text="Today"
+            android:textSize="30dp"/>
+
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <Button
+        android:id="@+id/LogoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="26dp" />
 
 </RelativeLayout>

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.nfc.Tag;
 import android.os.AsyncTask;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -52,29 +54,43 @@ import java.util.Set;
 
 public class GraphActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     TimeStamp[] timeStamps;
-    DataPoint[] graphValues = null;
     GraphView graph = null;
-    BroadcastReceiver getTimeStampReceiver;
+    ProgressBar pBar = null;
     String uniqueId;
 
+    private static final String PREFS_NAME = "prefs";
+    private static final String PREF_DARK_THEME = "dark_theme";
+    boolean useDarkTheme = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
+        if (useDarkTheme) {
+            setTheme(R.style.Theme_AppCompat_BuzzDarkTheme);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setLogo(R.mipmap.small_logo);
         getSupportActionBar().setDisplayUseLogoEnabled(true);
         graph = (GraphView) findViewById(R.id.graph);
+        graph.setVisibility(View.GONE);
+        pBar = (ProgressBar) findViewById(R.id.progressBar);
+        pBar.setVisibility(View.VISIBLE);
         uniqueId = getIntent().getStringExtra("UniqueId");
         Button logoutBtn = (Button) findViewById(R.id.LogoutButton);
         logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(GraphActivity.this, LoginActivity.class));
+                Intent intent = new Intent(GraphActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         //get the spinner from the xml.
         Spinner dropdown = (Spinner) findViewById(R.id.spinner1);
+        //if(useDarkTheme)
+          //  dropdown.setBackgroundColor(Color.GRAY);
         //create a list of items for the spinner.
         String[] items = new String[]{"1", "2", "3","4", "5", "6","7", "8", "9", "10"};
         //create an adapter to describe how the items are displayed, adapters are used in several places in android.
@@ -82,6 +98,7 @@ public class GraphActivity extends AppCompatActivity implements AdapterView.OnIt
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
         //set the spinners adapter to the previously created one.
         dropdown.setAdapter(spinnerAdapter);
+        dropdown.setSelection(6);
         dropdown.setOnItemSelectedListener(this);
         new GraphActivity.RetrieveTimeStampsTask(uniqueId).execute();
     }
@@ -93,7 +110,9 @@ public class GraphActivity extends AppCompatActivity implements AdapterView.OnIt
             Gson gson = new Gson();
             //timeStamps = gson.fromJson(ReverseList(json).toString(), TimeStamp[].class);
             timeStamps = gson.fromJson(json.toString(), TimeStamp[].class);
-            DrawGraph(10);
+            DrawGraph(7);
+            graph.setVisibility(View.VISIBLE);
+            pBar.setVisibility(View.GONE);
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -187,17 +206,28 @@ public class GraphActivity extends AppCompatActivity implements AdapterView.OnIt
 
         // draw values on top
         series.setDrawValuesOnTop(true);
-        series.setValuesOnTopColor(Color.BLACK);
+        if(useDarkTheme)
+            series.setValuesOnTopColor(Color.WHITE);
+        else
+            series.setValuesOnTopColor(Color.BLACK);
         //series.setValuesOnTopSize(50);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        graph.setVisibility(View.GONE);
+        pBar.setVisibility(View.VISIBLE);
         parent.getItemAtPosition(position);
         int scope = Integer.parseInt(parent.getItemAtPosition(position).toString());
         try {
-            if(timeStamps != null)
+            if(timeStamps != null) {
+                graph.setVisibility(View.GONE);
+                pBar.setVisibility(View.VISIBLE);
                 DrawGraph(scope);
+                graph.setVisibility(View.VISIBLE);
+                pBar.setVisibility(View.GONE);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }

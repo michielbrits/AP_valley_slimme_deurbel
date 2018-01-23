@@ -46,13 +46,9 @@ import java.util.TimerTask;
 
 public class LoginActivity extends AppCompatActivity {
 
-    BroadcastReceiver getTimeStampReceiver;
-    Object response = null;
     EditText uniqueIdText;
     EditText passwordText;
     ProgressBar progressBar;
-    TimeStamp[] timeStamps = null;
-    int lastTimeStampId;
     static final String API_URL = "http://michielserver.com/AP_valley/checklogin.php";
     String uniqueId = "";
     private static final String PREFS_NAME = "prefs";
@@ -71,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean useDarkTheme = preferences.getBoolean(PREF_DARK_THEME, false);
         if (useDarkTheme) {
-            //setTheme(R.style.Theme_AppCompat_SensorizeDarkTheme);
+            setTheme(R.style.Theme_AppCompat_BuzzDarkTheme);
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
